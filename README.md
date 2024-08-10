@@ -1,4 +1,6 @@
-Image feed for a cycling trip in Korea in 2023.
+Image feed for a bike tour from Frankfurt to Toulouse in 2024.
+
+Based on my previous [Korea 2023 repo](https://github.com/aapokiiso/korea-2023).
 
 ## Development
 

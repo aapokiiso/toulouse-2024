@@ -119,8 +119,8 @@ export default function Home({ sortedMediaItems }: { sortedMediaItems: CachedGoo
   return (
     <>
       <Head>
-        <title>Four Rivers Path and Beyond</title>
-        <meta name="description" content="Photo timeline of a bike tour in Korea in spring 2023." />
+        <title>Bike tour Frankfurt-Toulouse in 2024</title>
+        <meta name="description" content="Photo timeline of a bike tour in central Europe in August 2024." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
