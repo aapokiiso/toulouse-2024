@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  max-height: 100vh;
+  /* Having just "font-family: monospace;" changes root font-size to 13px as a side-effect. */
+  font-family: monospace, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mapboxgl-marker {
+  /* !important overrides inline opacity set by Mapbox. */
+  opacity: 0.6 !important;
+}
+
+.mapboxgl-marker-active {
+  opacity: 1 !important;
+}

@@ -1,0 +1,47 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      # https://nextjs.org/docs/advanced-features/ci-build-caching#github-actions
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      # https://github.com/actions/cache/blob/main/tips-and-workarounds.md#update-a-cache
+      - uses: actions/cache@v3
+        with:
+          path: public/media
+          key: ${{ runner.os }}-media-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-media-
+      - run: npm ci
+      - run: npm run build
+        env:
+          GOOGLE_OAUTH2_CLIENT_ID: "${{ vars.GOOGLE_OAUTH2_CLIENT_ID }}"
+          GOOGLE_OAUTH2_CLIENT_SECRET: "${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}"
+          GOOGLE_OAUTH2_CLIENT_REDIRECT_URL: "${{ vars.GOOGLE_OAUTH2_CLIENT_REDIRECT_URL }}"
+          GOOGLE_OAUTH2_CLIENT_REFRESH_TOKEN: "${{ secrets.GOOGLE_OAUTH2_CLIENT_REFRESH_TOKEN }}"
+          GOOGLE_PHOTOS_ALBUM_ID: "${{ vars.GOOGLE_PHOTOS_ALBUM_ID }}"
+          NEXT_PUBLIC_DISPLAY_TIMEZONE: "${{ vars.NEXT_PUBLIC_DISPLAY_TIMEZONE }}"
+          NEXT_PUBLIC_MAPBOX_TOKEN: "${{ vars.NEXT_PUBLIC_MAPBOX_TOKEN }}"
+          NEXT_PUBLIC_ARCHIVED: "${{ vars.NEXT_PUBLIC_ARCHIVED }}"
+      - uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GOOGLE_DEPLOY_SA_KEY }}"
+      - uses: google-github-actions/setup-gcloud@v1
+      - run: "gsutil -m rsync -r -d out gs://${{ vars.GOOGLE_STORAGE_BUCKET_NAME }}"
